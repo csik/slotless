@@ -11,7 +11,7 @@ s.close()
 
 newIDs=[]
 for i in IDs:
-    time.sleep(1)
+    #time.sleep(1)
     print "Getting ID " + str(i.get('id')) + "----------------------------------------------------"
     payload = {'hcodiscr': i.get('id'), 'el': '3A'}
     html = requests.post("http://www.aams.gov.it/site.php?id=9920", data=payload)
