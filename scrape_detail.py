@@ -9,17 +9,29 @@ s = shelve.open('data.shelve')
 IDs=s['ids']
 s.close()
 
+newIDs=[]
 for i in IDs:
     time.sleep(1)
     print "Getting ID " + str(i.get('id')) + "----------------------------------------------------"
     payload = {'hcodiscr': i.get('id'), 'el': '3A'}
     html = requests.post("http://www.aams.gov.it/site.php?id=9920", data=payload)
     root = lxml.html.fromstring(html.text)
-    for tr in root.cssselect("div[id='boxEvidenza'] tr"):
-        for t in tr[1:len(tr)-5]:
-            print type(t)
-    #print html.content
-    
+    for tr in root.cssselect("div[id='boxEvidenza'] tr")[1:-5]:
+        new_entry ={}
+        td = tr.cssselect('td')
+        new_entry['Codice_censimento_esercizio'] = td[0].text
+        new_entry['Denominazione'] = td[1].text
+        new_entry['Indirizzo'] = td[2].text
+        new_entry['Tipologia'] = td[3].text
+        new_entry['Superficie_del_locale_in_MQ'] = td[4].text
+        for key, value in i.iteritems():
+            new_entry[key]=value
+        newIDs.append(new_entry)
+        
+s = shelve.open('data.shelve')
+s['newIDs'] = newIDs
+s.close()
+            
     
     ##print html.content
     #root = lxml.html.fromstring(html.text)
@@ -37,13 +49,11 @@ for i in IDs:
     #    print taxcode.text
     #    print numberslots.text
         
-f= open('data.txt','rw')
-f.write(str(IDs))
-f.close()
+#f= open('data.txt','rw')
+#f.write(str(IDs))
+#f.close()
         
-s = shelve.open('data.shelve')
-s['ids'] = IDs
-s.close()
+
         
 
 
